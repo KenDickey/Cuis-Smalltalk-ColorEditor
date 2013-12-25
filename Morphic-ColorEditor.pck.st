@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 4:34:28.601635 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 6:25:54.228793 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 3!
-!requires: 'CSS3-NamedColors' 1 0 nil!
-!requires: 'Morphic-Misc1' 1 0 nil!
+!provides: 'Morphic-ColorEditor' 1 4!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Misc1' 1 0 nil!
+!requires: 'CSS3-NamedColors' 1 0 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -22,6 +22,16 @@ Panel subclass: #ColorEditorPanel
 	category: 'Morphic-ColorEditor'!
 !classDefinition: 'ColorEditorPanel class' category: #'Morphic-ColorEditor'!
 ColorEditorPanel class
+	instanceVariableNames: ''!
+
+!classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
+ImagePallet subclass: #ColorPallet
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic-ColorEditor'!
+!classDefinition: 'ColorPallet class' category: #'Morphic-ColorEditor'!
+ColorPallet class
 	instanceVariableNames: ''!
 
 !classDefinition: #ColorPaneMorph category: #'Morphic-ColorEditor'!
@@ -54,6 +64,9 @@ I present the ColorEditor UI
 Usage: 
 	ColorEditorPanel open.
 	ColorEditorPanel openColor: Color forestGreen.!
+
+!ColorPallet commentStamp: '<historical>' prior: 0!
+I am just a way to get a Color pallet!
 
 !ColorPaneMorph commentStamp: '<historical>' prior: 0!
 I present a plane in a color cube.
@@ -490,16 +503,6 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 12/24/2013 16:25'!
-closeBoxHit
-	"The user clicked on the close-box control in the window title.  For Mac users only, the Mac convention of option-click-on-close-box is obeyed if the mac option key is down."
-
-	Preferences dismissAllOnOptionClose ifTrue:
-		[Sensor rawMacOptionKeyPressed ifTrue:
-			[^ self world closeUnchangedWindows]].
-	self delete
-! !
-
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/26/2013 21:27'!
 colorPane
 
@@ -514,12 +517,6 @@ colorSwatch
 colorSwatchExtent
 
 	^ 64 @ 64! !
-
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:22'!
-createCloseBox
-	^ (PluggableButtonMorph model: self action: #closeBoxHit)
-		icon: Theme current closeIcon;
-		setBalloonText: 'close this window'! !
 
 !ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 08:48'!
 defaultExtent
@@ -736,6 +733,17 @@ openColor: aColor
 		openInWorld: self runningWorld extent: self defaultExtent;
 		yourself
 ! !
+
+!ColorPallet class methodsFor: 'new-morph participation' stamp: 'KenD 12/24/2013 17:55'!
+includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+	
+	^ true! !
+
+!ColorPallet class methodsFor: 'instance creation' stamp: 'KenD 12/24/2013 17:57'!
+initializedInstance
+
+	^ ImagePallet namedColors! !
 
 !ColorPaneMorph methodsFor: 'dropping/grabbing' stamp: 'KenD 11/30/2013 19:33'!
 aboutToGrab: aMorph
