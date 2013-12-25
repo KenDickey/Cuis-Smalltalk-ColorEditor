@@ -1,6 +1,8 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 3:56:31.912317 pm'!
 'Description Color Editor/Picker'!
 !provides: 'Morphic-ColorEditor' 1 1!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'CSS3-NamedColors' 1 0 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
