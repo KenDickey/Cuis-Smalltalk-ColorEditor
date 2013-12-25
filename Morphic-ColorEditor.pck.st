@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 3:56:31.912317 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 4:34:28.601635 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 1!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Morphic-ColorEditor' 1 3!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Morphic-Misc1' 1 0 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -15,7 +15,7 @@ ColorEditorModel class
 	instanceVariableNames: ''!
 
 !classDefinition: #ColorEditorPanel category: #'Morphic-ColorEditor'!
-SystemWindow subclass: #ColorEditorPanel
+Panel subclass: #ColorEditorPanel
 	instanceVariableNames: 'colorPane colorSwatch sliderColumn closeColorSwatch closeColorLabel closestRGB radioSelection rgbRadio hsvRadio closestColordictColor rgbString'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -49,7 +49,11 @@ ColorSliderMorph class
 I am the model (state holder) for a ColorEditor.!
 
 !ColorEditorPanel commentStamp: '<historical>' prior: 0!
-I present the ColorEditor UI!
+I present the ColorEditor UI
+
+Usage: 
+	ColorEditorPanel open.
+	ColorEditorPanel openColor: Color forestGreen.!
 
 !ColorPaneMorph commentStamp: '<historical>' prior: 0!
 I present a plane in a color cube.
@@ -486,6 +490,16 @@ buildSliderColumn
 
 	! !
 
+!ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 12/24/2013 16:25'!
+closeBoxHit
+	"The user clicked on the close-box control in the window title.  For Mac users only, the Mac convention of option-click-on-close-box is obeyed if the mac option key is down."
+
+	Preferences dismissAllOnOptionClose ifTrue:
+		[Sensor rawMacOptionKeyPressed ifTrue:
+			[^ self world closeUnchangedWindows]].
+	self delete
+! !
+
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/26/2013 21:27'!
 colorPane
 
@@ -500,6 +514,12 @@ colorSwatch
 colorSwatchExtent
 
 	^ 64 @ 64! !
+
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:22'!
+createCloseBox
+	^ (PluggableButtonMorph model: self action: #closeBoxHit)
+		icon: Theme current closeIcon;
+		setBalloonText: 'close this window'! !
 
 !ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 08:48'!
 defaultExtent
@@ -516,10 +536,21 @@ hsvRadio
 
 	^ hsvRadio! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/6/2013 18:44'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:19'!
+initialExtent
+
+	^ self defaultExtent! !
+
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:24'!
 initialize
 
+	| closeButton |
 	super initialize.
+	self color: Color white.
+	closeButton := self createCloseBox.
+	self addMorphFront: closeButton.
+	closeButton morphPosition: 2@2;
+		morphExtent: self boxExtent.
 	model := ColorEditorModel new.
 	colorSwatch := DropColorMorph fromColor: model color.
 	rgbString := SimpleNumberEntryMorph hexRGBEntry.
@@ -548,6 +579,16 @@ newRadioSelection: selectionSymbol
 
 	
 	! !
+
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:18'!
+openInWorld: aWorld extent: extent
+	"Open me in the current world"
+	
+	aWorld addMorph: self.
+	self morphPosition: (RealEstateAgent initialFrameFor: self world: aWorld) 
+		 	topLeft; morphExtent: extent.
+	aWorld startSteppingSubmorphsOf: self.
+! !
 
 !ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/7/2013 15:24'!
 refreshCloseColor
@@ -582,7 +623,7 @@ refreshColorSwatch
 	colorSwatch image: (model color iconOrThumbnailOfSize: self colorSwatchExtent).
 	colorSwatch color: self model color! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/24/2013 08:44'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/24/2013 16:27'!
 resetSliderColumn: sliderSym
 	"Radio selector changed.."
 
@@ -609,7 +650,7 @@ resetSliderColumn: sliderSym
 						fixedHeight: 256  
 						minorDirectionPadding: #center);
 		addMorph: scrollBar;
-		addMorph: (StringMorph contents: sliderLabel font: AbstractFont default)
+		addMorph: (LabelMorph contents: sliderLabel font: AbstractFont default)
 			layoutSpec: (LayoutSpec keepMorphExtent);
 		yourself
 	! !
