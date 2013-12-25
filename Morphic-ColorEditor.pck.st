@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 24 December 2013 at 8:01:30.079765 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 25 December 2013 at 8:05:50.905311 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 5!
+!provides: 'Morphic-ColorEditor' 1 6!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Misc1' 1 0 nil!
@@ -368,7 +368,7 @@ buildColorPaneColumn
 	
 	^ colorPaneColumn ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/24/2013 08:43'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/25/2013 08:03'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -538,20 +538,18 @@ initialExtent
 
 	^ self defaultExtent! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:24'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/25/2013 08:05'!
 initialize
 
-	| closeButton |
 	super initialize.
-	self color: Color white.
-	closeButton := self createCloseBox.
-	self addMorphFront: closeButton.
-	closeButton morphPosition: 2@2;
-		morphExtent: self boxExtent.
-	model := ColorEditorModel new.
+	self
+		color: Color white;
+		addCloseBox;
+		addCollapseBox.
+	model          := ColorEditorModel new.
 	colorSwatch := DropColorMorph fromColor: model color.
-	rgbString := SimpleNumberEntryMorph hexRGBEntry.
-	closestRGB := StringMorph new contents: ''.
+	rgbString     := SimpleNumberEntryMorph hexRGBEntry.
+	closestRGB  := StringMorph new contents: ''.
 	self refreshColorSwatch.
 
 	! !
