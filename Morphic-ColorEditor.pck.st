@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 25 December 2013 at 8:05:50.905311 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 26 December 2013 at 11:44:25.033988 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 6!
+!provides: 'Morphic-ColorEditor' 1 7!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Misc1' 1 0 nil!
@@ -66,7 +66,7 @@ Usage:
 	ColorEditorPanel openColor: Color forestGreen.!
 
 !ColorPallet commentStamp: '<historical>' prior: 0!
-I am just a way to get a Color pallet!
+I am just a way to get a Color pallet.  See my class side.!
 
 !ColorPaneMorph commentStamp: '<historical>' prior: 0!
 I present a plane in a color cube.
@@ -368,7 +368,7 @@ buildColorPaneColumn
 	
 	^ colorPaneColumn ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/25/2013 08:03'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:28'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -381,14 +381,14 @@ buildMorphicWindow
 							minorDirectionPadding: #top);
 		 addMorph: self buildSliderColumn
 			 layoutSpec: (LayoutSpec 
-							fixedWidth: 2 + (AbstractFont default 
-												widthOfString: 'brightness') "longest string"
+							fixedWidth: (AbstractFont default 
+										widthOfString: 'brightness') "longest string"
 							fixedHeight: 256 
-							minorDirectionPadding: #center);
+							minorDirectionPadding: #left);
 		 addMorph: self buildRadioButtonColumn
 			 layoutSpec: (LayoutSpec 
 							fixedWidth: 200
-							proportionalHeight: 1 
+							proportionalHeight: 0.9
 							minorDirectionPadding: #center);
 		layoutSpec: (LayoutSpec keepMorphExtent).
 		
@@ -397,10 +397,10 @@ buildMorphicWindow
 	^ self
 ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/24/2013 09:00'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:39'!
 buildRadioButtonColumn
 
-	| radioCol setupEntryMorph valueEntryMorph hexDisplayLayout swatchLayout aLayout |
+	| radioCol setupEntryMorph valueEntryMorph hexDisplayLayout |
 	rgbRadio := RadioGroup fromList: #(Red Green Blue).
 	hsvRadio := RadioGroup fromList: #(Hue Saturation Brightness).
 	rgbRadio when: #informRadioSelection send: #newRadioSelection: to: self.
@@ -411,7 +411,9 @@ buildRadioButtonColumn
 		entryMorph valueUpdator: [ :myValue | 
 					self model perform: ( selector , ':' ) asSymbol with: myValue ].
 		entryMorph refreshValueFrom: self model.
-		self model when: #colorChanged send: #refreshValueFrom: to: entryMorph.
+		self model when: #colorChanged 
+			send: #refreshValueFrom: 
+			to: entryMorph.
 	].
 	
 	#(Red Green Blue) do: [ :sym | | entryMorph |
@@ -440,7 +442,6 @@ buildRadioButtonColumn
 					fixedHeight: 20
 					minorDirectionPadding: #center).
 	].
-
 	(rgbRadio buttonFor: self defaultRadioSelector) select.
 	
 	hexDisplayLayout := LayoutMorph newRow.
@@ -458,37 +459,16 @@ buildRadioButtonColumn
 		refreshValueFrom: self model.
 	self model when: #colorChanged send: #refreshValueFrom: to: rgbString.
 
-	swatchLayout := LayoutMorph newRow.
-	aLayout := LayoutMorph newColumn.
-	closeColorSwatch := ImageMorph new.
-	closeColorLabel	:= StringMorph new contents: ''.
-	aLayout
-		addMorph: closeColorSwatch;
-		addMorph: closestRGB layoutSpec: (LayoutSpec 	keepMorphExtent);
-		addMorph: closeColorLabel layoutSpec: (LayoutSpec keepMorphExtent);
-		layoutSpec: (LayoutSpec
-						 proportionalWidth: 0.6
-						 proportionalHeight: 1.0
-						 minorDirectionPadding: #left).
-
-	swatchLayout 
-		addMorph: self colorSwatch 
-			layoutSpec:  (LayoutSpec
-						 proportionalWidth: 0.4
-						 proportionalHeight: 1.0
-						 minorDirectionPadding: #left);
-		addMorph: aLayout;
-		layoutSpec: (LayoutSpec
-						 proportionalWidth: 1.0
-						 fixedHeight: 32
-						 minorDirectionPadding: #left).
-
 	radioCol := LayoutMorph newColumn.
 	^ radioCol 
 		separation: 6;
 		addMorph: rgbRadio;
 		addMorph: hsvRadio;
-		addMorph: swatchLayout;
+		addMorph: self buildSwatchLayout
+			layoutSpec: (LayoutSpec
+						 proportionalWidth: 1
+						 fixedHeight: 68
+						 minorDirectionPadding: #top);
 		addMorph: hexDisplayLayout;
 		yourself
 	! !
@@ -501,6 +481,40 @@ buildSliderColumn
 	
 	^ sliderColumn 
 
+	! !
+
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:40'!
+buildSwatchLayout
+	"Display swatch of current color and closest named color"
+
+	| swatchLayout subLayout simpleSpec |
+	closeColorSwatch := DropColorMorph fromColor: model color.
+	closeColorLabel   := StringMorph new contents: ''.
+	simpleSpec := LayoutSpec keepMorphExtent.
+	simpleSpec minorDirectionPadding: #left.
+	subLayout := LayoutMorph newColumn.
+	subLayout
+		separation: 4;
+		padding: #bottom;
+		addMorph: closestRGB        layoutSpec: simpleSpec;
+		addMorph: closeColorLabel layoutSpec: simpleSpec.
+
+	swatchLayout := LayoutMorph newRow.
+	^ swatchLayout 
+		"separation: 2;"
+		addMorph: self colorSwatch 
+			layoutSpec: (LayoutSpec proportionalWidth: 0.4
+							proportionalHeight:  0.9
+							minorDirectionPadding: #bottom);
+		addMorph: closeColorSwatch 
+			layoutSpec: (LayoutSpec proportionalWidth: 0.05
+							proportionalHeight: 1.0
+							minorDirectionPadding: #center);
+		addMorph: subLayout 
+			layoutSpec: (LayoutSpec proportionalWidth: 0.6
+							proportionalHeight: 1.0
+							minorDirectionPadding: #left);
+		yourself
 	! !
 
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/26/2013 21:27'!
@@ -585,15 +599,19 @@ openInWorld: aWorld extent: extent
 	aWorld startSteppingSubmorphsOf: self.
 ! !
 
-!ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/7/2013 15:24'!
+!ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/26/2013 11:43'!
 refreshCloseColor
 	"model color has changed.  Refresh my views."
 	
 	| closeAssoc |
 	closeAssoc := self model color closestAssocFrom: Color css3ColorDictionary.
 	closeColorSwatch image: (closeAssoc value iconOrThumbnailOfSize: 32).
-	closeColorLabel contents: closeAssoc key asString.
-	closestRGB contents: '16r', (ColorEditorModel hexStringRGB: closeAssoc value).
+	closeColorLabel 
+		contents: closeAssoc key asString; 
+		fitContents.
+	closestRGB 
+		contents: '16r', (ColorEditorModel hexStringRGB: closeAssoc value);
+		fitContents
 ! !
 
 !ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/5/2013 21:57'!
