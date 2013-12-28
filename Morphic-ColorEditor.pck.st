@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 26 December 2013 at 11:44:25.033988 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 28 December 2013 at 10:05:55.635798 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 7!
+!provides: 'Morphic-ColorEditor' 1 9!
+!requires: 'Morphic-Misc1' 1 0 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Misc1' 1 0 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -483,7 +483,7 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:40'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/28/2013 09:45'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
@@ -501,7 +501,7 @@ buildSwatchLayout
 
 	swatchLayout := LayoutMorph newRow.
 	^ swatchLayout 
-		"separation: 2;"
+"		setProperty: #allowsSubmorphDrag toValue: #allowsSubmorphDrag;"
 		addMorph: self colorSwatch 
 			layoutSpec: (LayoutSpec proportionalWidth: 0.4
 							proportionalHeight:  0.9
@@ -599,13 +599,16 @@ openInWorld: aWorld extent: extent
 	aWorld startSteppingSubmorphsOf: self.
 ! !
 
-!ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/26/2013 11:43'!
+!ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/28/2013 10:04'!
 refreshCloseColor
 	"model color has changed.  Refresh my views."
 	
-	| closeAssoc |
+	| closeAssoc closeColor |
 	closeAssoc := self model color closestAssocFrom: Color css3ColorDictionary.
-	closeColorSwatch image: (closeAssoc value iconOrThumbnailOfSize: 32).
+	closeColor := closeAssoc value.
+	closeColorSwatch 
+		image: (closeColor iconOrThumbnailOfSize: 32);
+		color: closeColor.
 	closeColorLabel 
 		contents: closeAssoc key asString; 
 		fitContents.
@@ -1381,6 +1384,12 @@ colorPane: aColorPaneMorph
 		refreshColorFromModel; 
 		redrawBackground.! !
 
+!ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 12/26/2013 13:08'!
+deltaPoint
+	"Offset for slider to center on bar"
+	
+	^ -4  @ -5! !
+
 !ColorSliderMorph methodsFor: 'events' stamp: 'KenD 12/5/2013 17:52'!
 handlesMouseDown: aMouseButtonEvent
 	"Do I want to receive mouseDown events (mouseDown:, mouseMove:, mouseUp:)?"
@@ -1469,11 +1478,11 @@ refreshColorFromModel
 
 	! !
 
-!ColorSliderMorph methodsFor: 'event handling' stamp: 'KenD 12/5/2013 19:05'!
+!ColorSliderMorph methodsFor: 'event handling' stamp: 'KenD 12/26/2013 13:06'!
 resetSliderPosition
 	"Center me over selected Z position"
 	
-	self sliderMorph morphPosition: 0 @ (self scaledZPosition) - 5! !
+	self sliderMorph morphPosition: self deltaPoint + (0 @ (self scaledZPosition)).! !
 
 !ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 12/5/2013 20:16'!
 scaledZPosition
