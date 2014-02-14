@@ -1,9 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1898] on 28 December 2013 at 10:05:55.635798 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1963] on 13 February 2014 at 7:04:49.19724 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 9!
-!requires: 'Morphic-Misc1' 1 0 nil!
+!provides: 'Morphic-ColorEditor' 1 10!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Misc1' 1 0 nil!
+!requires: 'Cuis-Base' 42 1963 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -199,7 +200,7 @@ greenFactor: zeroToOne
 		g: (zeroToOne * 255 / 255) asFloat 
 		b: self color blue)! !
 
-!ColorEditorModel methodsFor: 'printing' stamp: 'KenD 12/8/2013 09:16'!
+!ColorEditorModel methodsFor: 'printing' stamp: 'jmv 2/13/2014 13:42'!
 hexStringRGB
 	"Answer my RGB as hex but with no 16r prefix"
 
@@ -207,7 +208,7 @@ hexStringRGB
 	  (self green printPaddedWith: $0 to: 2 base: 16) , 
 	  (self blue   printPaddedWith: $0 to: 2 base: 16)
 	"
-	^ self class hexStringRGB: self color! !
+	^ self color hexStringRGB! !
 
 !ColorEditorModel methodsFor: 'accessing' stamp: 'KenD 11/23/2013 16:44'!
 hue
@@ -272,14 +273,11 @@ redFactor: zeroToOne
 		g: self color green 
 		b: self color blue)! !
 
-!ColorEditorModel methodsFor: 'printing' stamp: 'KenD 12/2/2013 15:36'!
+!ColorEditorModel methodsFor: 'printing' stamp: 'jmv 2/13/2014 13:45'!
 rgbValue
 	"Answer my RGB as an integer"
 
-	^ ( '16r', 
-	    (self red    printPaddedWith: $0 to: 2 base: 16) ,
-	    (self green printPaddedWith: $0 to: 2 base: 16) , 
-	    (self blue   printPaddedWith: $0 to: 2 base: 16) ) asNumber! !
+	^ ( '16r',  self color hexStringRGB) asNumber! !
 
 !ColorEditorModel methodsFor: 'accessing' stamp: 'KenD 11/23/2013 16:45'!
 saturation
@@ -338,14 +336,6 @@ setRGBColorFromInteger: anInteger
 color: aColor
 
 	^ self new setColor: aColor! !
-
-!ColorEditorModel class methodsFor: 'printing' stamp: 'KenD 12/6/2013 18:51'!
-hexStringRGB: aColor
-	"Answer aColor RGB as hex but with no 16r prefix"
-
-	^ (((aColor red    * 255) rounded)  printPaddedWith: $0 to: 2 base: 16) , 
-	  (((aColor green * 255) rounded)  printPaddedWith: $0 to: 2 base: 16) , 
-	  (((aColor blue   * 255) rounded)   printPaddedWith: $0 to: 2 base: 16)! !
 
 !ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/23/2013 13:20'!
 buildColorPaneColumn
@@ -599,7 +589,7 @@ openInWorld: aWorld extent: extent
 	aWorld startSteppingSubmorphsOf: self.
 ! !
 
-!ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/28/2013 10:04'!
+!ColorEditorPanel methodsFor: 'color updating' stamp: 'jmv 2/13/2014 13:43'!
 refreshCloseColor
 	"model color has changed.  Refresh my views."
 	
@@ -613,9 +603,8 @@ refreshCloseColor
 		contents: closeAssoc key asString; 
 		fitContents.
 	closestRGB 
-		contents: '16r', (ColorEditorModel hexStringRGB: closeAssoc value);
-		fitContents
-! !
+		contents: '16r', (closeColor hexStringRGB);
+		fitContents! !
 
 !ColorEditorPanel methodsFor: 'color updating' stamp: 'KenD 12/5/2013 21:57'!
 refreshColor
@@ -1396,12 +1385,6 @@ handlesMouseDown: aMouseButtonEvent
 	
 	^ true! !
 
-!ColorSliderMorph methodsFor: 'events' stamp: 'KenD 12/5/2013 17:52'!
-handlesMouseStillDown: evt
-	"Return true if the receiver wants to get repeated #mouseStillDown: messages between #mouseDown: and #mouseUp"
-	
-	^ true! !
-
 !ColorSliderMorph methodsFor: 'initialization' stamp: 'KenD 12/5/2013 19:11'!
 initialize
 
@@ -1437,10 +1420,9 @@ mouseButton1Down: aMouseButtonEvent localPosition: localEventPosition
 	self colorPane zValue: (self zValueFromY: localEventPosition y).
 	self resetSliderPosition.! !
 
-!ColorSliderMorph methodsFor: 'events' stamp: 'KenD 12/5/2013 21:09'!
-processMouseStillDown: anEvent localPosition: localEventPosition
+!ColorSliderMorph methodsFor: 'events' stamp: 'jmv 2/13/2014 14:20'!
+mouseMove: aMouseMoveEvent localPosition: localEventPosition
 
-	super processMouseStillDown: anEvent localPosition: localEventPosition.
 	self colorPane zValue: (self zValueFromY: localEventPosition y).
 	self resetSliderPosition.! !
 
