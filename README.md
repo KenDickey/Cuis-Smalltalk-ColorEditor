@@ -1,6 +1,10 @@
 Cuis-Smalltalk-ColorEditor
 ==========================
 
+Feature require: #'Morphic-ColorEditor'.
+
+Tested in Cuis 4.2  2049
+
 Color Editor/Picker  RGB/HSV with closest CSS3 color
 
   World Menu -> New Morph -> ColorEditor -> ColorEditorPanel
