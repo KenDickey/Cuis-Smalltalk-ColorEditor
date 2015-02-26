@@ -1,9 +1,11 @@
 Cuis-Smalltalk-ColorEditor
 ==========================
+Tested in Cuis 4.2  rev 2198
 
-Feature require: #'Morphic-ColorEditor'.
-
-Tested in Cuis 4.2  2049
+To load the package
+````Smalltalk
+	Feature require: #'Morphic-ColorEditor'.
+````
 
 Color Editor/Picker  RGB/HSV with closest CSS3 color
 
