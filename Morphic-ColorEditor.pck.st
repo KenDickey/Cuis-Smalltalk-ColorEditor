@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1962] on 13 February 2014 at 8:07:15.310974 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2198] on 25 February 2015 at 11:15:18.291000035 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 11!
+!provides: 'Morphic-ColorEditor' 1 13!
 !requires: 'Morphic-Misc1' 1 15 nil!
-!requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Cuis-Base' 42 1963 nil!
+!requires: 'Cuis-Base' 42 2198 nil!
+!requires: 'CSS3-NamedColors' 1 0 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -1466,11 +1466,12 @@ resetSliderPosition
 	
 	self sliderMorph morphPosition: self deltaPoint + (0 @ (self scaledZPosition)).! !
 
-!ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 12/5/2013 20:16'!
+!ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 2/25/2015 20:58'!
 scaledZPosition
 	"Answer color Z value scaled to 0..256 as Y position (zero low .. 256 high)"
+	"NB: must round result as coordinate cannot be a fraction"
 
-	^ 256 - ((self colorPane zValue / self maxZValue) * 256)! !
+	^ (256 - ((self colorPane zValue / self maxZValue) * 256)) rounded! !
 
 !ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 12/4/2013 22:03'!
 sliderMorph
