@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2198] on 25 February 2015 at 11:15:18.291000035 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 19 April 2015 at 8:17:18.841865 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 13!
-!requires: 'Morphic-Misc1' 1 15 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Morphic-ColorEditor' 1 15!
 !requires: 'Cuis-Base' 42 2198 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
+!requires: 'Morphic-Misc1' 1 15 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -358,7 +358,7 @@ buildColorPaneColumn
 	
 	^ colorPaneColumn ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:28'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 4/19/2015 19:39'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -379,7 +379,7 @@ buildMorphicWindow
 			 layoutSpec: (LayoutSpec 
 							fixedWidth: 200
 							proportionalHeight: 0.9
-							minorDirectionPadding: #center);
+							minorDirectionPadding: #top);
 		layoutSpec: (LayoutSpec keepMorphExtent).
 		
 	self model when: #colorChanged send: #refreshColor to: self.
@@ -473,7 +473,7 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/28/2013 09:45'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 4/19/2015 20:15'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
@@ -485,7 +485,7 @@ buildSwatchLayout
 	subLayout := LayoutMorph newColumn.
 	subLayout
 		separation: 4;
-		padding: #bottom;
+		padding: #top;
 		addMorph: closestRGB        layoutSpec: simpleSpec;
 		addMorph: closeColorLabel layoutSpec: simpleSpec.
 
@@ -497,13 +497,13 @@ buildSwatchLayout
 							proportionalHeight:  0.9
 							minorDirectionPadding: #bottom);
 		addMorph: closeColorSwatch 
-			layoutSpec: (LayoutSpec proportionalWidth: 0.05
+			layoutSpec: (LayoutSpec fixedWidth: 20
 							proportionalHeight: 1.0
-							minorDirectionPadding: #center);
+							minorDirectionPadding: #bottom);
 		addMorph: subLayout 
 			layoutSpec: (LayoutSpec proportionalWidth: 0.6
 							proportionalHeight: 1.0
-							minorDirectionPadding: #left);
+							minorDirectionPadding: #top);
 		yourself
 	! !
 
@@ -1466,12 +1466,12 @@ resetSliderPosition
 	
 	self sliderMorph morphPosition: self deltaPoint + (0 @ (self scaledZPosition)).! !
 
-!ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 2/25/2015 20:58'!
+!ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 3/2/2015 15:23'!
 scaledZPosition
 	"Answer color Z value scaled to 0..256 as Y position (zero low .. 256 high)"
 	"NB: must round result as coordinate cannot be a fraction"
 
-	^ (256 - ((self colorPane zValue / self maxZValue) * 256)) rounded! !
+	^ (256 - ((self colorPane zValue / self maxZValue) * 256))! !
 
 !ColorSliderMorph methodsFor: 'accessing' stamp: 'KenD 12/4/2013 22:03'!
 sliderMorph
