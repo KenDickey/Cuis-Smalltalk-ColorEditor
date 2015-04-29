@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 19 April 2015 at 8:17:18.841865 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 30 April 2015 at 7:57:35.168036 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 15!
+!provides: 'Morphic-ColorEditor' 1 16!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Cuis-Base' 42 2198 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Morphic-Misc1' 1 15 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -542,14 +542,12 @@ initialExtent
 
 	^ self defaultExtent! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/25/2013 08:05'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 4/30/2015 07:54'!
 initialize
 
 	super initialize.
-	self
-		color: Color white;
-		addCloseBox;
-		addCollapseBox.
+	self color: Color white.
+	self titleMorph showButtonsNamed: #( close collapse ).
 	model          := ColorEditorModel new.
 	colorSwatch := DropColorMorph fromColor: model color.
 	rgbString     := SimpleNumberEntryMorph hexRGBEntry.
