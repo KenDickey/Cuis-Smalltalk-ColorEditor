@@ -1,6 +1,6 @@
 Cuis-Smalltalk-ColorEditor
 ==========================
-Tested in Cuis 4.2  rev 2280
+Tested in Cuis 4.2  rev 2424
 
 To load the package
 ````Smalltalk
@@ -15,7 +15,16 @@ Color Editor/Picker  RGB/HSV with closest CSS3 color
 
 Select a morph via left-click and use morph menu to "show drop target for me"
 
-Drag color from color pallet or circle in color editor's color plane & drop onto drop target
+Drag color from color pallet or circle in color editor's color plane & drop onto drop target.
 
 
-Requires packages in Cuis-Smalltalk-NamedColors and Cuis-Smalltalk-Morphic-Misc1
+Requires packages in Cuis-Smalltalk-NamedColors and Cuis-Smalltalk-Morphic-Misc1.
+
+You can change the color dictionary.
+
+````Smalltalk
+	ColorPallet useCrayonColorDict.
+	ColorPallet useXKCDColorDict.
+	ColorPallet useNBSISCCColorDict.
+	ColorPallet useCSS3ColorDict.
+````
