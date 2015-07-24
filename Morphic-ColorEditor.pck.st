@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 30 April 2015 at 7:57:35.168036 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 24 July 2015 at 11:34:24.613075 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 16!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Morphic-ColorEditor' 1 17!
 !requires: 'Cuis-Base' 42 2198 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Morphic-Misc1' 1 15 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
@@ -758,6 +758,15 @@ useCSS3ColorDict
 "
 	Feature require: 'CSS3-NamedColors'.
 	Color setColorNamesDict: Color css3ColorDictionary.! !
+
+!ColorPallet class methodsFor: 'color dictionary' stamp: 'KenD 7/24/2015 11:33'!
+useCrayonColorDict
+"
+	ColorPallet useCrayonColorDict.
+"
+
+	Feature require: 'Crayon-NamedColors'.
+	Color setColorNamesDict: Color crayonColorDictionary.! !
 
 !ColorPallet class methodsFor: 'color dictionary' stamp: 'KenD 12/24/2013 19:57'!
 useNBSISCCColorDict
