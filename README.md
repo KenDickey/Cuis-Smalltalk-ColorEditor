@@ -28,3 +28,5 @@ You can change the color dictionary.
 	ColorPallet useNBSISCCColorDict.
 	ColorPallet useCSS3ColorDict.
 ````
+
+![Color Editor](ColorEditor.png)
