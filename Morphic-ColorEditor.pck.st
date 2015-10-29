@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 24 July 2015 at 11:34:24.613075 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 29 October 2015 at 3:36:56.788759 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 17!
-!requires: 'Cuis-Base' 42 2198 nil!
+!provides: 'Morphic-ColorEditor' 1 18!
+!requires: 'Cuis-Base' 42 2563 nil!
+!requires: 'Morphic-Misc1' 1 15 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
-!requires: 'Morphic-Misc1' 1 15 nil!
 !classDefinition: #ColorEditorModel category: #'Morphic-ColorEditor'!
 Object subclass: #ColorEditorModel
 	instanceVariableNames: 'color'
@@ -337,62 +337,67 @@ color: aColor
 
 	^ self new setColor: aColor! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/23/2013 13:20'!
+!ColorEditorPanel methodsFor: 'private' stamp: 'KenD 10/29/2015 15:16'!
+backgroundColor
+
+	^ Color veryVeryLightGray! !
+
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:30'!
 buildColorPaneColumn
 
-	| colorPaneColumn selector |
+	| selector column hexDisplayLayout |
 	selector := self defaultRadioSelector asLowercase asSymbol.
 	colorPane := (ColorPaneMorph 
 								zSelector: self defaultRadioSelector 
 								zValue:  (self model perform: selector)
 								colorPoint: 10@10).
-	colorPane updateColorFromModel: self model;
-		layoutSpec: (LayoutSpec fixedWidth: 256 
-										fixedHeight: 256 
-										minorDirectionPadding: #top).
+	colorPane updateColorFromModel: self model.
 	colorPane when: #colorChanged send: #updateColorFromPane to: self.
-	colorPaneColumn := LayoutMorph newColumn.
-	colorPaneColumn 
-		separation: 6;
-		addMorph: colorPane.
 	
-	^ colorPaneColumn ! !
+	hexDisplayLayout := LayoutMorph newRow.
+	hexDisplayLayout
+	     layoutSpec: (LayoutSpec 
+							proportionalWidth: 0.2 
+							proportionalHeight: 0.1
+							minorDirectionPadding: #left);
+		separation: 1;
+		addMorph: (StringMorph new contents: '16r') layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: self rgbString;
+		addMorph: (StringMorph new contents: ' hexRGB');
+		color: self backgroundColor.
+	
+	column := LayoutMorph newColumn.
+	column
+		addMorph: colorPane;
+		addMorph: hexDisplayLayout;
+		color: self backgroundColor.
+	
+	^ column! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 4/19/2015 19:39'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:17'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
 	self layoutMorph beRow; " A row of columns"
-		 separation: 2;
+		 separation: 6;
 		 addMorph: self buildColorPaneColumn;
-			 layoutSpec: (LayoutSpec 
-							fixedWidth: 256 
-							fixedHeight: 256 
-							minorDirectionPadding: #top);
-		 addMorph: self buildSliderColumn
-			 layoutSpec: (LayoutSpec 
-							fixedWidth: (AbstractFont default 
-										widthOfString: 'brightness') "longest string"
-							fixedHeight: 256 
-							minorDirectionPadding: #left);
-		 addMorph: self buildRadioButtonColumn
-			 layoutSpec: (LayoutSpec 
-							fixedWidth: 200
-							proportionalHeight: 0.9
-							minorDirectionPadding: #top);
-		layoutSpec: (LayoutSpec keepMorphExtent).
+		 addMorph: self buildSliderColumn;
+		 addMorph: self buildRadioButtonColumn;
+		 color: self backgroundColor.
 		
 	self model when: #colorChanged send: #refreshColor to: self.
 	
 	^ self
 ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/26/2013 11:39'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:17'!
 buildRadioButtonColumn
 
-	| radioCol setupEntryMorph valueEntryMorph hexDisplayLayout |
+	| radioCol setupEntryMorph valueEntryMorph |
 	rgbRadio := RadioGroup fromList: #(Red Green Blue).
+	rgbRadio separation: 2.
 	hsvRadio := RadioGroup fromList: #(Hue Saturation Brightness).
+	hsvRadio separation: 2.
 	rgbRadio when: #informRadioSelection send: #newRadioSelection: to: self.
 	hsvRadio when: #informRadioSelection send: #newRadioSelection: to: self.
 	setupEntryMorph := [ :sym :entryMorph | | selector |
@@ -415,33 +420,16 @@ buildRadioButtonColumn
 	setupEntryMorph value: #Hue value: valueEntryMorph.
 	(hsvRadio rowFor: #Hue) 
 		addMorph: valueEntryMorph;
-		addMorph: (StringMorph contents: ' deg')
-			layoutSpec: (LayoutSpec 
-							fixedWidth: 36 
-							fixedHeight: 20
-							minorDirectionPadding: #center).
+		addMorph: (StringMorph contents: ' deg').
 .
 	#(Saturation Brightness) do:  [ :sym | | entryMorph |
 		entryMorph := SimpleNumberEntryMorph percentExact.
 		setupEntryMorph value: sym value: entryMorph.
 		(hsvRadio rowFor: sym) 
 			addMorph: entryMorph;
-			addMorph: (StringMorph contents: ' %') 
-				layoutSpec: (LayoutSpec 
-					fixedWidth: 20 
-					fixedHeight: 20
-					minorDirectionPadding: #center).
+			addMorph: (StringMorph contents: ' %').
 	].
 	(rgbRadio buttonFor: self defaultRadioSelector) select.
-	
-	hexDisplayLayout := LayoutMorph newRow.
-	hexDisplayLayout 
-		addMorph: (StringMorph new contents: '16r') 
-			layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: self rgbString 
-			layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: (StringMorph new contents: ' hexRGB') 
-			layoutSpec: (LayoutSpec keepMorphExtent).
 
 	self rgbString 
 		valueAccessor: [ :myModel | myModel rgbValue ];
@@ -451,59 +439,47 @@ buildRadioButtonColumn
 
 	radioCol := LayoutMorph newColumn.
 	^ radioCol 
-		separation: 6;
+		separation: 2;
+		padding: #left;
 		addMorph: rgbRadio;
 		addMorph: hsvRadio;
-		addMorph: self buildSwatchLayout
-			layoutSpec: (LayoutSpec
-						 proportionalWidth: 1
-						 fixedHeight: 68
-						 minorDirectionPadding: #top);
-		addMorph: hexDisplayLayout;
+		addMorph: self buildSwatchLayout;
+		color: self backgroundColor;
 		yourself
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/5/2013 19:53'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:18'!
 buildSliderColumn
 
 	sliderColumn := LayoutMorph newColumn.
-	self resetSliderColumn: self defaultRadioSelector.
+	sliderColumn color: self backgroundColor.
+	self resetSliderColumn.
 	
 	^ sliderColumn 
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 4/19/2015 20:15'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:22'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
-	| swatchLayout subLayout simpleSpec |
+	| swatchLayout labelColumn |
 	closeColorSwatch := DropColorMorph fromColor: model color.
+	labelColumn        := LayoutMorph newColumn.
 	closeColorLabel   := StringMorph new contents: ''.
-	simpleSpec := LayoutSpec keepMorphExtent.
-	simpleSpec minorDirectionPadding: #left.
-	subLayout := LayoutMorph newColumn.
-	subLayout
-		separation: 4;
-		padding: #top;
-		addMorph: closestRGB        layoutSpec: simpleSpec;
-		addMorph: closeColorLabel layoutSpec: simpleSpec.
+	labelColumn
+		padding: #center;
+		addMorph: closeColorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closestRGB  layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closeColorLabel  layoutSpec: (LayoutSpec keepMorphExtent);
+		color: self backgroundColor.
 
 	swatchLayout := LayoutMorph newRow.
 	^ swatchLayout 
-"		setProperty: #allowsSubmorphDrag toValue: #allowsSubmorphDrag;"
-		addMorph: self colorSwatch 
-			layoutSpec: (LayoutSpec proportionalWidth: 0.4
-							proportionalHeight:  0.9
-							minorDirectionPadding: #bottom);
-		addMorph: closeColorSwatch 
-			layoutSpec: (LayoutSpec fixedWidth: 20
-							proportionalHeight: 1.0
-							minorDirectionPadding: #bottom);
-		addMorph: subLayout 
-			layoutSpec: (LayoutSpec proportionalWidth: 0.6
-							proportionalHeight: 1.0
-							minorDirectionPadding: #top);
+		separation: 6;
+		addMorph: self colorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: labelColumn;
+		color: self backgroundColor;
 		yourself
 	! !
 
@@ -511,6 +487,16 @@ buildSwatchLayout
 colorPane
 
 	^ colorPane ! !
+
+!ColorEditorPanel methodsFor: 'private' stamp: 'KenD 10/29/2015 08:57'!
+colorSelectionSymbol
+
+	^ radioSelection ! !
+
+!ColorEditorPanel methodsFor: 'private' stamp: 'KenD 10/29/2015 08:57'!
+colorSelectionSymbol: aSym
+
+	radioSelection := aSym! !
 
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/19/2013 21:15'!
 colorSwatch
@@ -522,15 +508,21 @@ colorSwatchExtent
 
 	^ 64 @ 64! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 08:48'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 13:40'!
 defaultExtent
 
-	^ 570@330! !
+	^ 660@380! !
 
 !ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 11/24/2013 18:58'!
 defaultRadioSelector
 
 	^ #Green! !
+
+!ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 09:02'!
+fontPreferenceChanged
+
+	super fontPreferenceChanged.
+	self resetSliderColumn.! !
 
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/19/2013 21:14'!
 hsvRadio
@@ -542,26 +534,30 @@ initialExtent
 
 	^ self defaultExtent! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 4/30/2015 07:54'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 15:04'!
 initialize
 
 	super initialize.
-	self color: Color white.
+	self color: Color veryVeryLightGray.
 	self titleMorph showButtonsNamed: #( close collapse ).
 	model          := ColorEditorModel new.
 	colorSwatch := DropColorMorph fromColor: model color.
 	rgbString     := SimpleNumberEntryMorph hexRGBEntry.
 	closestRGB  := StringMorph new contents: ''.
+	self colorSelectionSymbol: self defaultRadioSelector.
 	self refreshColorSwatch.
 
 	! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 08:36'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 15:09'!
 minimumExtent
 
-	^ 570@330! !
+	| titleExtent panelExtent |
+	titleExtent := self titleMorph minimumExtent.
+	panelExtent := self layoutMorph minimumExtent.
+	^ ((titleExtent x max: panelExtent x)  * 1.1) @ (titleExtent y + panelExtent y)! !
 
-!ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 11/27/2013 15:00'!
+!ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 09:01'!
 newRadioSelection: selectionSymbol
 
 	"Only one radio group can be selected at a time"
@@ -570,20 +566,21 @@ newRadioSelection: selectionSymbol
 	( #(Hue Saturation Brightness) includes: selectionSymbol ) 
 		ifTrue: [ self rgbRadio unselectAll ].
 		
-	self resetSliderColumn: selectionSymbol.
+	self colorSelectionSymbol: selectionSymbol.
+	self resetSliderColumn.
 	self colorPane fromModel: self model selector: selectionSymbol.
 	self colorPane resetFocus.
 
 	
 	! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/24/2013 16:18'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 13:41'!
 openInWorld: aWorld extent: extent
 	"Open me in the current world"
 	
 	aWorld addMorph: self.
 	self morphPosition: (RealEstateAgent initialFrameFor: self world: aWorld) 
-		 	topLeft; morphExtent: extent.
+		 	topLeft; morphExtent: self minimumExtent. "?? defaultExtent??"
 	aWorld startSteppingSubmorphsOf: self.
 ! !
 
@@ -626,7 +623,12 @@ refreshColorSwatch
 	colorSwatch image: (model color iconOrThumbnailOfSize: self colorSwatchExtent).
 	colorSwatch color: self model color! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/24/2013 16:27'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 09:01'!
+resetSliderColumn
+
+	self resetSliderColumn: self colorSelectionSymbol! !
+
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 13:47'!
 resetSliderColumn: sliderSym
 	"Radio selector changed.."
 
@@ -640,7 +642,7 @@ resetSliderColumn: sliderSym
 		ifNotNil: [ :sb | self colorPane removeDependent: sb ].
 		
 	self colorPane when: #colorChanged send: #refreshColorFromModel to: scrollBar.
-	self colorPane when: #resetFocus send: #redrawBackground to: scrollBar.
+	self colorPane when: #resetFocus     send: #redrawBackground         to: scrollBar.
 
 	sliderLabel := sliderSym asString.
 	
@@ -651,10 +653,9 @@ resetSliderColumn: sliderSym
 						fixedWidth: 4 + (AbstractFont default 
 												widthOfString: 'brightness') "longest string"
 						fixedHeight: 256  
-						minorDirectionPadding: #center);
+						minorDirectionPadding: #top);
 		addMorph: scrollBar;
-		addMorph: (LabelMorph contents: sliderLabel font: AbstractFont default)
-			layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: (LabelMorph contents: sliderLabel font: AbstractFont default);
 		yourself
 	! !
 
@@ -668,12 +669,12 @@ rgbString
 	"Answer my rgbString StringMorph"
 	^ rgbString! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 11/24/2013 17:08'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 13:33'!
 setColor: aColor
 
 	self model setColor: aColor.
 	self refreshColorSwatch.
-"	self triggerEvent: #colorChange.  @@useful??@@"! !
+! !
 
 !ColorEditorPanel methodsFor: 'private' stamp: 'KenD 11/25/2013 19:12'!
 sliderColumn
@@ -702,7 +703,7 @@ includeInNewMorphMenu
 	
 	^ true! !
 
-!ColorEditorPanel class methodsFor: 'instance creation' stamp: 'KenD 12/6/2013 19:10'!
+!ColorEditorPanel class methodsFor: 'instance creation' stamp: 'KenD 10/28/2015 20:34'!
 initializedInstance
 
 	|  window |
