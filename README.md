@@ -1,6 +1,6 @@
 Cuis-Smalltalk-ColorEditor
 ==========================
-Tested in Cuis 4.2  rev 2563
+Tested in Cuis 4.2  rev 2571
 
 To load the package
 ````Smalltalk
