@@ -2,6 +2,8 @@ Cuis-Smalltalk-ColorEditor
 ==========================
 Tested in Cuis 4.2  rev 2676
 
+Requires packages Cuis-Smalltalk-NamedColors and Cuis-Smalltalk-Morphic-Misc1.
+
 To load the package
 ````Smalltalk
 	Feature require: #'Morphic-ColorEditor'.
@@ -17,8 +19,6 @@ Select a morph via left-click and use morph menu to "show drop target for me"
 
 Drag color from color pallet or circle in color editor's color plane & drop onto drop target.
 
-
-Requires packages in Cuis-Smalltalk-NamedColors and Cuis-Smalltalk-Morphic-Misc1.
 
 You can change the color dictionary.
 
