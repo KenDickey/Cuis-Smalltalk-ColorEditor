@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2850] on 7 August 2016 at 8:53:13 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 16 September 2016 at 4:01:28 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 19!
+!provides: 'Morphic-ColorEditor' 1 20!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Morphic-Misc1' 1 15 nil!
 !requires: 'Cuis-Base' 42 2563 nil!
+!requires: 'CSS3-NamedColors' 1 0 nil!
 !classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
 ImagePallet subclass: #ColorPallet
 	instanceVariableNames: ''
@@ -168,7 +168,7 @@ backgroundColor
 
 	^ Color veryVeryLightGray! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:30'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:52:16'!
 buildColorPaneColumn
 
 	| selector column hexDisplayLayout |
@@ -179,6 +179,7 @@ buildColorPaneColumn
 								colorPoint: 10@10).
 	colorPane updateColorFromModel: self model.
 	colorPane when: #colorChanged send: #updateColorFromPane to: self.
+	colorPane layoutSpec: (LayoutSpec keepMorphExtent).
 	
 	hexDisplayLayout := LayoutMorph newRow.
 	hexDisplayLayout
@@ -196,16 +197,19 @@ buildColorPaneColumn
 	column
 		addMorph: colorPane;
 		addMorph: hexDisplayLayout;
+		padding: #top;
+		separation: 4;
 		color: self backgroundColor.
 	
 	^ column! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:17'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:57:06'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
 	self layoutMorph beRow; " A row of columns"
 		 separation: 6;
+		 padding: #left;
 		 addMorph: self buildColorPaneColumn;
 		 addMorph: self buildSliderColumn;
 		 addMorph: self buildRadioButtonColumn;
@@ -216,7 +220,7 @@ buildMorphicWindow
 	^ self
 ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:17'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:28:47'!
 buildRadioButtonColumn
 
 	| radioCol setupEntryMorph valueEntryMorph |
@@ -246,14 +250,14 @@ buildRadioButtonColumn
 	setupEntryMorph value: #Hue value: valueEntryMorph.
 	(hsvRadio rowFor: #Hue) 
 		addMorph: valueEntryMorph;
-		addMorph: (StringMorph contents: ' deg').
+		addMorph: (StringMorph contents: 'deg').
 .
 	#(Saturation Brightness) do:  [ :sym | | entryMorph |
 		entryMorph := SimpleNumberEntryMorph percentExact.
 		setupEntryMorph value: sym value: entryMorph.
 		(hsvRadio rowFor: sym) 
 			addMorph: entryMorph;
-			addMorph: (StringMorph contents: ' %').
+			addMorph: (StringMorph contents: '%').
 	].
 	(rgbRadio buttonFor: self defaultRadioSelector) select.
 
@@ -285,19 +289,20 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:22'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:59:39'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
 	| swatchLayout labelColumn |
 	closeColorSwatch := DropColorMorph fromColor: model color.
-	labelColumn        := LayoutMorph newColumn.
+	labelColumn          := LayoutMorph newColumn.
 	closeColorLabel   := StringMorph new contents: ''.
 	labelColumn
 		padding: #center;
+		separation: 3;
 		addMorph: closeColorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: closestRGB  layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: closeColorLabel  layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closestRGB           layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closeColorLabel    layoutSpec: (LayoutSpec keepMorphExtent);
 		color: self backgroundColor.
 
 	swatchLayout := LayoutMorph newRow.
@@ -1095,6 +1100,11 @@ makeSaturationOverlay
 
 	^ satOverlay
 ! !
+
+!ColorPaneMorph class methodsFor: 'geometry' stamp: 'KenD 9/16/2016 15:48:34'!
+minimumExtent
+	"Also my maximum extent"
+	^ 256@256! !
 
 !ColorPaneMorph class methodsFor: 'accessing' stamp: 'KenD 11/28/2013 22:59'!
 rbForm
