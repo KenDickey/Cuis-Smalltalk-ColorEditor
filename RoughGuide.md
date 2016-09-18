@@ -1,6 +1,6 @@
 Cuis-Smalltalk-ColorEditor
 ==========================
-Techniques of Interest
+# Techniques of Interest
 
 - Adds custom Morphs to the Morphic Menu (World Menu -> New Morph..)
 

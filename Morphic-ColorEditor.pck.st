@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 16 September 2016 at 4:01:28 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 17 September 2016 at 9:55:38 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 20!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Morphic-ColorEditor' 1 21!
 !requires: 'Morphic-Misc1' 1 15 nil!
-!requires: 'Cuis-Base' 42 2563 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
+!requires: 'Cuis-Base' 42 2563 nil!
 !classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
 ImagePallet subclass: #ColorPallet
 	instanceVariableNames: ''
@@ -168,7 +168,7 @@ backgroundColor
 
 	^ Color veryVeryLightGray! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:52:16'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:49:22'!
 buildColorPaneColumn
 
 	| selector column hexDisplayLayout |
@@ -199,7 +199,7 @@ buildColorPaneColumn
 		addMorph: hexDisplayLayout;
 		padding: #top;
 		separation: 4;
-		color: self backgroundColor.
+		color: Color transparent.
 	
 	^ column! !
 
@@ -220,7 +220,7 @@ buildMorphicWindow
 	^ self
 ! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:28:47'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:48:58'!
 buildRadioButtonColumn
 
 	| radioCol setupEntryMorph valueEntryMorph |
@@ -274,22 +274,22 @@ buildRadioButtonColumn
 		addMorph: rgbRadio;
 		addMorph: hsvRadio;
 		addMorph: self buildSwatchLayout;
-		color: self backgroundColor;
+		color: Color transparent;
 		yourself
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 15:18'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:48:35'!
 buildSliderColumn
 
 	sliderColumn := LayoutMorph newColumn.
-	sliderColumn color: self backgroundColor.
+	sliderColumn color: Color transparent.
 	self resetSliderColumn.
 	
 	^ sliderColumn 
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:59:39'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:51:15'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
@@ -310,7 +310,7 @@ buildSwatchLayout
 		separation: 6;
 		addMorph: self colorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
 		addMorph: labelColumn;
-		color: self backgroundColor;
+		color: Color transparent;
 		yourself
 	! !
 
@@ -459,7 +459,7 @@ resetSliderColumn
 
 	self resetSliderColumn: self colorSelectionSymbol! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 10/29/2015 13:47'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:54:15'!
 resetSliderColumn: sliderSym
 	"Radio selector changed.."
 
@@ -482,7 +482,7 @@ resetSliderColumn: sliderSym
 		separation: 6;
 		layoutSpec: (LayoutSpec 
 						fixedWidth: 4 + (AbstractFont default 
-												widthOfString: 'brightness') "longest string"
+												widthOfString: 'Brightness') "longest string"
 						fixedHeight: 256  
 						minorDirectionPadding: #top);
 		addMorph: scrollBar;
@@ -523,10 +523,10 @@ defaultColor
 
 	^ Color  r: 16r40/255 g: 16rA5/255 b: 16rD0/255.! !
 
-!ColorEditorPanel class methodsFor: 'initialization' stamp: 'KenD 12/24/2013 09:04'!
+!ColorEditorPanel class methodsFor: 'initialization' stamp: 'KenD 9/17/2016 21:24:54'!
 defaultExtent
 
-	^ 570@330! !
+	^ 660@330! !
 
 !ColorEditorPanel class methodsFor: 'new-morph participation' stamp: 'KenD 12/6/2013 19:09'!
 includeInNewMorphMenu
