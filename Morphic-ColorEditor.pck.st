@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 17 September 2016 at 9:55:38 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 24 November 2016 at 9:19:17 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 21!
-!requires: 'Morphic-Misc1' 1 15 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Morphic-ColorEditor' 1 22!
 !requires: 'CSS3-NamedColors' 1 0 nil!
-!requires: 'Cuis-Base' 42 2563 nil!
+!requires: 'Cuis-Base' 50 2984 nil!
+!requires: 'Morphic-Misc1' 1 86 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
 ImagePallet subclass: #ColorPallet
 	instanceVariableNames: ''
@@ -379,14 +379,6 @@ initialize
 	self refreshColorSwatch.
 
 	! !
-
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 15:09'!
-minimumExtent
-
-	| titleExtent panelExtent |
-	titleExtent := self titleMorph minimumExtent.
-	panelExtent := self layoutMorph minimumExtent.
-	^ ((titleExtent x max: panelExtent x)  * 1.1) @ (titleExtent y + panelExtent y)! !
 
 !ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 09:01'!
 newRadioSelection: selectionSymbol
