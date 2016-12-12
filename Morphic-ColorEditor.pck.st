@@ -1,10 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 24 November 2016 at 9:19:17 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 11 December 2016 at 8:33:08 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 22!
+!provides: 'Morphic-ColorEditor' 1 23!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Misc1' 1 99 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
-!requires: 'Morphic-Misc1' 1 86 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
 ImagePallet subclass: #ColorPallet
 	instanceVariableNames: ''
@@ -203,7 +203,7 @@ buildColorPaneColumn
 	
 	^ column! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/16/2016 15:57:06'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/11/2016 20:27:49'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -216,6 +216,7 @@ buildMorphicWindow
 		 color: self backgroundColor.
 		
 	self model when: #colorChanged send: #refreshColor to: self.
+	self makeColorSwatchesDraggable.
 	
 	^ self
 ! !
@@ -289,7 +290,7 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 9/17/2016 21:51:15'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/11/2016 20:26:49'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
@@ -311,6 +312,7 @@ buildSwatchLayout
 		addMorph: self colorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
 		addMorph: labelColumn;
 		color: Color transparent;
+"		setProperty: #'allowsSubmorphDrag' toValue: true; "
 		yourself
 	! !
 
@@ -365,7 +367,7 @@ initialExtent
 
 	^ self defaultExtent! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 10/29/2015 15:04'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/11/2016 20:27:29'!
 initialize
 
 	super initialize.
@@ -378,7 +380,23 @@ initialize
 	self colorSelectionSymbol: self defaultRadioSelector.
 	self refreshColorSwatch.
 
+
 	! !
+
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/11/2016 20:31:48'!
+makeColorSwatchesDraggable
+
+	| swatches |
+	swatches := { colorSwatch. closeColorSwatch. }.
+	swatches do: [ :s |
+		s setProperty: #handlesMouseUp toValue: true.
+		s setProperty: #mouseButton1Up:localPosition: 
+		  toValue: [ :aMouseButtonEvent :localEventPosition |
+					(self morphContainsPoint: localEventPosition)
+						ifTrue: [  self runningWorld activeHand attachMorph:
+								 	(DropColorMorph fromColor: s color) ]
+		 ].
+	].! !
 
 !ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 09:01'!
 newRadioSelection: selectionSymbol
