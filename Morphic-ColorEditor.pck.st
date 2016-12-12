@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 11 December 2016 at 8:33:08 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 12 December 2016 at 2:52:44 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 23!
+!provides: 'Morphic-ColorEditor' 1 24!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Misc1' 1 99 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
@@ -290,13 +290,13 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/11/2016 20:26:49'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/12/2016 08:08:10'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
 	| swatchLayout labelColumn |
 	closeColorSwatch := DropColorMorph fromColor: model color.
-	labelColumn          := LayoutMorph newColumn.
+	labelColumn        := LayoutMorph newColumn.
 	closeColorLabel   := StringMorph new contents: ''.
 	labelColumn
 		padding: #center;
@@ -312,7 +312,6 @@ buildSwatchLayout
 		addMorph: self colorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
 		addMorph: labelColumn;
 		color: Color transparent;
-"		setProperty: #'allowsSubmorphDrag' toValue: true; "
 		yourself
 	! !
 
