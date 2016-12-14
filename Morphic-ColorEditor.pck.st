@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 7:25:49 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 7:56:29 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 26!
+!provides: 'Morphic-ColorEditor' 1 27!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
@@ -383,10 +383,17 @@ initialize
 
 	! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/13/2016 18:56:37'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/13/2016 19:54:33'!
 makeColorSwatchDroppable
 
 	self colorSwatch 
+		setProperty:  #'allowsMorphDrop' toValue: true;
+		setProperty: #dropAction toValue: [ :aMorph :colorValue |
+			(colorValue isKindOf: Color)
+				ifTrue: [ self setColor: colorValue ]. "else ignore"
+		].
+	
+	self colorPane 
 		setProperty:  #'allowsMorphDrop' toValue: true;
 		setProperty: #dropAction toValue: [ :aMorph :colorValue |
 			(colorValue isKindOf: Color)
