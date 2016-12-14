@@ -1,10 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 6:41:59 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 7:25:49 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 25!
+!provides: 'Morphic-ColorEditor' 1 26!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Misc1' 1 99 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
+!requires: 'Morphic-Misc1' 1 103 nil!
 !classDefinition: #ColorPallet category: #'Morphic-ColorEditor'!
 ImagePallet subclass: #ColorPallet
 	instanceVariableNames: ''
@@ -383,7 +383,7 @@ initialize
 
 	! !
 
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/13/2016 18:37:29'!
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/13/2016 18:56:37'!
 makeColorSwatchDroppable
 
 	self colorSwatch 
