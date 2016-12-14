@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 7:56:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 14 December 2016 at 9:30:06 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 27!
+!provides: 'Morphic-ColorEditor' 1 28!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
@@ -203,7 +203,7 @@ buildColorPaneColumn
 	
 	^ column! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/13/2016 18:35:22'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/14/2016 09:25:20'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -216,7 +216,6 @@ buildMorphicWindow
 		 color: self backgroundColor.
 		
 	self model when: #colorChanged send: #refreshColor to: self.
-	self makeColorSwatchesDraggable.
 	self makeColorSwatchDroppable.
 	
 	^ self
@@ -291,26 +290,45 @@ buildSliderColumn
 
 	! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/12/2016 08:08:10'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/14/2016 09:29:06'!
 buildSwatchLayout
 	"Display swatch of current color and closest named color"
 
-	| swatchLayout labelColumn |
+	| swatchLayout labelColumn colorFrame closeColorFrame |
 	closeColorSwatch := DropColorMorph fromColor: model color.
+	closeColorFrame := FrameMorph new ::
+		morphExtent: closeColorSwatch morphExtent + 4;
+		borderColor: Color black; 
+		borderWidth: 2; 	
+		"Make color swatch draggable"
+		setProperty: #allowsSubmorphDrag toValue: true;
+		yourself.
+	closeColorFrame addMorph: closeColorSwatch.
+	closeColorSwatch morphPosition: 2@2.
 	labelColumn        := LayoutMorph newColumn.
 	closeColorLabel   := StringMorph new contents: ''.
 	labelColumn
 		padding: #center;
 		separation: 3;
-		addMorph: closeColorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: closestRGB           layoutSpec: (LayoutSpec keepMorphExtent);
-		addMorph: closeColorLabel    layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closeColorFrame layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closestRGB          layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: closeColorLabel   layoutSpec: (LayoutSpec keepMorphExtent);
 		color: self backgroundColor.
+		
+	colorFrame := FrameMorph new ::
+		morphExtent: colorSwatch morphExtent + 4;
+		borderColor: Color black; 
+		borderWidth: 2; 	
+		"Make color swatch draggable"
+		setProperty: #allowsSubmorphDrag toValue: true;
+		yourself.
+	colorFrame addMorph: colorSwatch.
+	colorSwatch morphPosition: 2@2.
 
 	swatchLayout := LayoutMorph newRow.
 	^ swatchLayout 
 		separation: 6;
-		addMorph: self colorSwatch layoutSpec: (LayoutSpec keepMorphExtent);
+		addMorph: colorFrame layoutSpec: (LayoutSpec keepMorphExtent);
 		addMorph: labelColumn;
 		color: Color transparent;
 		yourself
@@ -399,21 +417,6 @@ makeColorSwatchDroppable
 			(colorValue isKindOf: Color)
 				ifTrue: [ self setColor: colorValue ]. "else ignore"
 		].! !
-
-!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/11/2016 20:31:48'!
-makeColorSwatchesDraggable
-
-	| swatches |
-	swatches := { colorSwatch. closeColorSwatch. }.
-	swatches do: [ :s |
-		s setProperty: #handlesMouseUp toValue: true.
-		s setProperty: #mouseButton1Up:localPosition: 
-		  toValue: [ :aMouseButtonEvent :localEventPosition |
-					(self morphContainsPoint: localEventPosition)
-						ifTrue: [  self runningWorld activeHand attachMorph:
-								 	(DropColorMorph fromColor: s color) ]
-		 ].
-	].! !
 
 !ColorEditorPanel methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 09:01'!
 newRadioSelection: selectionSymbol
