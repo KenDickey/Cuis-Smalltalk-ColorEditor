@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 14 December 2016 at 9:30:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 14 December 2016 at 10:28:09 am'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 28!
+!provides: 'Morphic-ColorEditor' 1 29!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
@@ -104,6 +104,41 @@ This pane shows the range of color of z at the focus point -- constant (x,y)
 
 !ColorEditorModel commentStamp: '<historical>' prior: 0!
 I am the model (state holder) for a ColorEditor.!
+
+!Color class methodsFor: '*morphic-coloreditor' stamp: 'KenD 12/14/2016 10:27:25'!
+colorSelectionMenu
+	"Open a popUp menu and let user select color selection option"
+"
+	Color colorSelectionMenu.
+"
+	| menu choices choicesSetter selectedIndex |
+	choices := #( 'CSS3 Colors'      "1"
+					'Crayon Colors'   "2"
+					'NBSISCC Colors' "3"
+					'XKCD Colors'     "4"
+					'ColorMix Editor'           "5"
+					'Cancel'                        "6"
+				   ).
+				
+	choicesSetter := #(
+				useCSS3ColorDict 
+				useCrayonColorDict
+				useNBSISCCColorDict
+				useXKCDColorDict
+				).
+	
+	menu := PopUpMenu labelArray: choices.
+	selectedIndex := menu startUpWithCaption: 'Choose named colors or editor'.
+	(selectedIndex = 5)
+		ifTrue: [ ColorEditorPanel initializedInstance openInWorld ].
+	(selectedIndex < 5)
+		ifTrue: [
+			ColorPallet perform: ( choicesSetter at: selectedIndex ).
+			ImagePallet namedColors openInWorld
+		].
+	"else cancel -> no action"
+
+	! !
 
 !ColorPallet class methodsFor: 'new-morph participation' stamp: 'KenD 12/24/2013 17:55'!
 includeInNewMorphMenu
