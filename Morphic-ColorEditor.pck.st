@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 14 December 2016 at 10:32:36 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 14 December 2016 at 2:43:26 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 30!
+!provides: 'Morphic-ColorEditor' 1 31!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
@@ -105,7 +105,7 @@ This pane shows the range of color of z at the focus point -- constant (x,y)
 !ColorEditorModel commentStamp: '<historical>' prior: 0!
 I am the model (state holder) for a ColorEditor.!
 
-!Color class methodsFor: '*morphic-coloreditor' stamp: 'KenD 12/14/2016 10:31:23'!
+!Color class methodsFor: '*morphic-coloreditor' stamp: 'KenD 12/14/2016 13:12:50'!
 colorSelectionMenu
 	"Open a popUp menu and let user select color selection option"
 "
@@ -131,7 +131,7 @@ colorSelectionMenu
 	selectedIndex := menu startUpWithCaption: 'Choose named colors or editor'.
 	(selectedIndex = 5)
 		ifTrue: [ ColorEditorPanel initializedInstance openInWorld ].
-	(selectedIndex < 5)
+	((selectedIndex > 0) and: [selectedIndex < 5])
 		ifTrue: [
 			ColorPallet perform: ( choicesSetter at: selectedIndex ).
 			ImagePallet namedColors openInWorld
