@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 12 December 2016 at 2:52:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 6:41:59 pm'!
 'Description Color Editor/Picker'!
-!provides: 'Morphic-ColorEditor' 1 24!
+!provides: 'Morphic-ColorEditor' 1 25!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Misc1' 1 99 nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
@@ -203,7 +203,7 @@ buildColorPaneColumn
 	
 	^ column! !
 
-!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/11/2016 20:27:49'!
+!ColorEditorPanel methodsFor: 'GUI building' stamp: 'KenD 12/13/2016 18:35:22'!
 buildMorphicWindow
 	"Create a useful ColorEditor window"
 	
@@ -217,6 +217,7 @@ buildMorphicWindow
 		
 	self model when: #colorChanged send: #refreshColor to: self.
 	self makeColorSwatchesDraggable.
+	self makeColorSwatchDroppable.
 	
 	^ self
 ! !
@@ -381,6 +382,16 @@ initialize
 
 
 	! !
+
+!ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/13/2016 18:37:29'!
+makeColorSwatchDroppable
+
+	self colorSwatch 
+		setProperty:  #'allowsMorphDrop' toValue: true;
+		setProperty: #dropAction toValue: [ :aMorph :colorValue |
+			(colorValue isKindOf: Color)
+				ifTrue: [ self setColor: colorValue ]. "else ignore"
+		].! !
 
 !ColorEditorPanel methodsFor: 'initialization' stamp: 'KenD 12/11/2016 20:31:48'!
 makeColorSwatchesDraggable
