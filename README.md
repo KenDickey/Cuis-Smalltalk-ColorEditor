@@ -2,7 +2,7 @@ Cuis-Smalltalk-ColorEditor
 ==========================
 Tested in Cuis 5.0 rev 3319
 
-Requires packages NamedColors, Color-Aux, and Morphic-Misc1.
+Requires packages NamedColors, Color-Extras, and Morphic-Misc1.
 
 To load the package
 ````Smalltalk

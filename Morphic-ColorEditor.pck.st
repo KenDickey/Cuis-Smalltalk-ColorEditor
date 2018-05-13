@@ -5,7 +5,7 @@
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'CSS3-NamedColors' 1 0 nil!
 !requires: 'Cuis-Base' 50 2984 nil!
-!requires: 'Color-Aux' 1 3 nil!
+!requires: 'Color-Extras' 1 4 nil!
 SystemOrganization addCategory: #'Morphic-ColorEditor'!
 
 
